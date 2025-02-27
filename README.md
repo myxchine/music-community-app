@@ -3,7 +3,7 @@ Social Media for Music lovers who move fast and want to share their music with t
 Features:
 - Fully typesafe with TypeScript
 - Frontend in React
-- Backend connects to a hosted Postgres database integrated through an orm (drizzle)
+- Backend connects to a hosted Postgres database integrated through an orm (drizzle typescript orm)
 - Userbase for creating users who can sign up and create their unqiue profile with username, name, description and profile picture
 - Any user can upload their music files under their account to share with anyone who has access to the internet
 - Authentication with NextAuth.js

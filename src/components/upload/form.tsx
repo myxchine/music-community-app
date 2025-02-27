@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { handleFormSubmit } from "./handle-form-submit";
-export function MusicUploadForm() {
+export function SongUploadForm() {
   const [file, setFile] = useState<File | null>(null);
+  const [title, setTitle] = useState<string>("");
   const [status, setStatus] = useState<Status>({
     status: "neutral",
     message: "Upload your song",
@@ -22,11 +23,27 @@ export function MusicUploadForm() {
       onSubmit={onSubmit}
       className="flex flex-col w-full items-center justify-center gap-4"
     >
-      <input type="file" onChange={handleFileChange} accept="audio/*" />
+      <input
+        type="text"
+        name="title"
+        placeholder="Song title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+        className="w-full px-3 py-2 rounded-lg border"
+      />
+      <input
+        type="file"
+        onChange={handleFileChange}
+        accept="audio/*"
+        required
+      />
       <button
         type="submit"
         disabled={isUploading || !file}
-        className="w-full py-2 px-4 bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-white rounded-lg"
+        className={
+          "w-full py-2 px-4 bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-white rounded-lg"
+        }
       >
         {isUploading ? "Uploading..." : "Upload"}
       </button>
@@ -37,7 +54,7 @@ export function MusicUploadForm() {
   );
 }
 const statusColours = {
-  neutral: "bg-black/5 px-3 py-1 text-center rounded-lg",
-  success: "bg-green-100 text-green-800 px-3 py-1 text-center rounded-lg",
-  error: "bg-red-100 text-red-800 px-3 py-1 text-center rounded-lg",
+  neutral: "bg-black/5 px-3 py-2 text-center rounded-lg",
+  success: "bg-green-100 text-green-800 px-3 py-2 text-center rounded-lg",
+  error: "bg-red-100 text-red-800 px-3 py-2 text-center rounded-lg",
 };

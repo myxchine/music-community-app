@@ -1,4 +1,4 @@
-import { getUploadUrl } from "@/server/object-storage/get-upload-url";
+import { getUploadUrl } from "@/server/songs-storage/get-upload-url";
 export async function handleFormSubmit({
   file,
   setStatus,

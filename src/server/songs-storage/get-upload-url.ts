@@ -1,8 +1,8 @@
 "use server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { s3Client } from "@/server/object-storage/r2config";
-import { generateUniqueFileName } from "@/server/object-storage/helpers";
+import { s3Client } from "@/server/songs-storage";
+import { generateUniqueFileName } from "@/server/songs-storage/helpers";
 const validAudioTypes = [
   "audio/mpeg",
   "audio/mp3",
