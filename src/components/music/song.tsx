@@ -23,7 +23,7 @@ export default function SongComponent({
 
     if (themeColorMeta) {
       if (modelOpen) {
-        themeColorMeta.setAttribute("content", "rgba(0, 0, 0, 0.1)"); // 10% black
+        themeColorMeta.setAttribute("content", "#E6E6E6"); // 10% black
       } else {
         themeColorMeta.setAttribute("content", "#ffffff"); // white
       }
@@ -31,24 +31,26 @@ export default function SongComponent({
   }, [modelOpen]);
 
   const handleClick = () => {
-    addToQueue(song);
     playSong(song);
   };
   return (
     <div className="flex flex-row w-full items-cenet justify-center">
       <div
-        className="flex flex-row items-center justify-start w-full gap-6 cursor-pointer"
+        className="flex flex-row items-center justify-start w-full gap-3 cursor-pointer"
         onClick={handleClick}
       >
-        <img
+        <Image
           src={
             `https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${song.image}` ||
             "/images/default-cover.svg"
           }
+          width={100}
+          height={100}
+          priority
           alt="song cover art"
-          className="w-1/6 object-cover aspect-square bg-black/5 rounded-xl"
+          className="w-18 object-cover aspect-square bg-black/5 rounded-xl"
         />
-        <div className="flex flex-col gap-0">
+        <div className="flex flex-col gap-0 w-full">
           <p>{song.title}</p>
           <p className="text-xs text-black/60">{song.artistName}</p>
         </div>
@@ -64,6 +66,7 @@ export default function SongComponent({
           song={song}
           deleteable={deleteable}
           setModelOpen={setModelOpen}
+          addToQueue={addToQueue}
         />
       )}
     </div>
@@ -74,10 +77,12 @@ function Modal({
   song,
   deleteable,
   setModelOpen,
+  addToQueue,
 }: {
   song: SongWithArtistName;
   deleteable?: boolean;
   setModelOpen: (open: boolean) => void;
+  addToQueue: (song: SongWithArtistName) => void;
 }) {
   const handleDelete = async () => {
     const success = await deleteSong({ song });
@@ -91,8 +96,8 @@ function Modal({
   return (
     <div className="flex flex-col justify-end gap-4 fixed bottom-0 left-0 w-full z-[999999999] h-[100svh] bg-black/20 backdrop-blur-md px-2">
       <div className="max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center w-full">
-        <div className="flex flex-col gap-4 w-full items-center justify-start bg-white rounded-t-3xl p-6  ">
-          <div className="flex flex-row gap-3 w-full items-center ">
+        <div className="flex flex-col gap-4 w-full items-center justify-start bg-white rounded-t-3xl p-6  pb-12 ">
+          <div className="flex flex-row gap-3 w-full items-center pb-4">
             <Image
               src={
                 `https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${song.image}` ||
@@ -101,7 +106,8 @@ function Modal({
               alt="song cover art"
               width={100}
               height={100}
-              className="rounded-xl  size-32 aspect-square object-cover bg-white/10"
+              priority
+              className="rounded-xl  size-24 aspect-square object-cover bg-white/10"
             />
             <div>
               <p className="text-xl">{song.title}</p>
@@ -109,7 +115,12 @@ function Modal({
             </div>
           </div>
 
-          <button className="w-full button-black">Add to queue</button>
+          <button
+            className="w-full button-black"
+            onClick={() => addToQueue(song)}
+          >
+            Add to queue
+          </button>
           <button className="w-full button-black">Like song</button>
           {deleteable && (
             <button onClick={handleDelete} className="button-black w-full">
