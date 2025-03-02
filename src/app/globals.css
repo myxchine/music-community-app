@@ -6,9 +6,35 @@
   --background: #ffffff;
   --foreground: #000;
   --accent: #4e0000;
+  --max-width: 32rem;
 }
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans);
+  text-wrap: balance;
+}
+.button-black {
+  @apply bg-black text-white px-4 py-2 rounded-lg border border-black hover:bg-black/80;
+}
+.heading1 {
+  @apply text-2xl font-bold uppercase;
+}
+.heading2 {
+  @apply text-xl font-bold uppercase;
+}
+.heading3 {
+  @apply text-lg font-bold uppercase;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+/* Music Player */
+
+input[type="range"] {
+  -webkit-appearance: none; /* Override default appearance */
+  width: 100%; /* Full width */
+  height: 20px; /* Adjust height as needed */
 }

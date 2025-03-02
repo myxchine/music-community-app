@@ -1,28 +1,36 @@
-import createMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
-export default createMiddleware(routing);
-export const config = {
-  matcher: ["/", "/(en|pt|fr|es|de)/:path*"],
-};
-
-// TODO: use middleware to authenticate quicker
-
-/*
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt"; // If using NextAuth
-export async function middleware(request: NextRequest) {
-  // Check paths that need protection
-  if (request.nextUrl.pathname.startsWith("/api/stream-audio")) {
-    const token = await getToken({ req: request });
-    // If not authenticated, redirect to home page
-    if (!token) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+import { routing } from "./i18n/routing";
+import createMiddleware from "next-intl/middleware";
+import { getToken } from "next-auth/jwt";
+const handleI18nRouting = createMiddleware(routing);
+
+export async function middleware(req: any) {
+  const isSignInPage = routing.locales
+    .flatMap((locale) => `/${locale}/signin`)
+    .includes(req.nextUrl.pathname);
+
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    console.error("No auth secret");
   }
-  return NextResponse.next();
+  const token = await getToken({
+    req,
+    secret,
+  });
+
+  const isAuthenticated = !!token;
+
+  if (isSignInPage && isAuthenticated) {
+    return NextResponse.redirect(new URL("/en/account", req.url));
+  }
+  if (isSignInPage && !isAuthenticated) {
+    return handleI18nRouting(req);
+  }
+  if (!isSignInPage && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/en/signin", req.url));
+  }
 }
+
 export const config = {
-  matcher: ["/api/stream-audio/:path*"],
+  matcher: ["/", "/(en|pt|fr|es|de)/:path*", "/api/stream-audio"],
 };
-*/

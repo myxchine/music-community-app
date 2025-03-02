@@ -1,8 +1,17 @@
 {
+  "Global": {
+    "home": "Home",
+    "search": "Search",
+    "account": "Account"
+  },
   "HomePage": {
-    "title": ""
+    "title": "Home"
   },
   "UploadPage": {
     "title": ""
+  },
+  "AccountPage": {
+    "title": "",
+    "upload new song": "upload new song"
   }
 }

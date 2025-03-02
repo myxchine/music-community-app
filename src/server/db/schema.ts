@@ -9,7 +9,10 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
-export const createTable = pgTableCreator((name) => `music_${name}`);
+
+export const createTable = pgTableCreator((name) => `music_${name}`); // Custom prefix create table helper function
+
+// Core tables
 export const users = createTable(
   "user",
   {
@@ -35,6 +38,7 @@ export const users = createTable(
     idIdx: index("user_id_idx").on(table.id),
   })
 );
+
 export const categories = createTable("category", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -47,6 +51,7 @@ export const categories = createTable("category", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
+
 export const songs = createTable(
   "song",
   {
@@ -59,11 +64,11 @@ export const songs = createTable(
       .references(() => users.id, { onDelete: "cascade" }),
     fileUrl: text("file_url").notNull().unique(),
     title: varchar("title", { length: 255 }).notNull(),
-    categoryId: varchar("category_id", { length: 255 })
-      .references(() => categories.id, { onDelete: "restrict" }),
-    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    categoryId: varchar("category_id", { length: 255 }).references(
+      () => categories.id,
+      { onDelete: "restrict" }
+    ),
     description: text("description"),
-    listens: integer("listens").default(0).notNull(),
     image: text("image"),
     createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
@@ -74,9 +79,33 @@ export const songs = createTable(
     artistIdx: index("song_artist_idx").on(table.artistId),
     createdAtIdx: index("song_created_at_idx").on(table.createdAt),
     titleIdx: index("song_title_idx").on(table.title),
-    listensIdx: index("song_listens_idx").on(table.listens),
   })
 );
+
+export const songListens = createTable(
+  "song_listen",
+  {
+    id: varchar("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    songId: varchar("song_id", { length: 255 })
+      .notNull()
+      .references(() => songs.id, { onDelete: "cascade" }),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    timestamp: timestamp("timestamp", { mode: "date", withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    songIdx: index("song_listen_song_idx").on(table.songId),
+    userIdx: index("song_listen_user_idx").on(table.userId),
+    timestampIdx: index("song_listen_timestamp_idx").on(table.timestamp),
+  })
+);
+
 export const likes = createTable(
   "like",
   {
@@ -94,6 +123,7 @@ export const likes = createTable(
     pk: primaryKey({ columns: [table.songId, table.userId] }),
   })
 );
+
 export const tags = createTable("tag", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -102,6 +132,7 @@ export const tags = createTable("tag", {
   name: varchar("name", { length: 255 }).notNull().unique(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
 });
+
 export const songTags = createTable(
   "song_tag",
   {
@@ -116,6 +147,7 @@ export const songTags = createTable(
     pk: primaryKey({ columns: [table.songId, table.tagId] }),
   })
 );
+
 export const follows = createTable(
   "user_follow",
   {
@@ -163,6 +195,7 @@ export const accounts = createTable(
     userIdIdx: index("account_user_id_idx").on(account.userId),
   })
 );
+
 export const sessions = createTable(
   "session",
   {
@@ -181,6 +214,7 @@ export const sessions = createTable(
     userIdIdx: index("session_user_id_idx").on(session.userId),
   })
 );
+
 export const verificationTokens = createTable(
   "verification_token",
   {
@@ -203,7 +237,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   following: many(follows),
   followers: many(follows),
+  songListens: many(songListens),
 }));
+
 export const followsRelations = relations(follows, ({ one }) => ({
   follower: one(users, {
     fields: [follows.followerId],
@@ -214,13 +250,16 @@ export const followsRelations = relations(follows, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
 export const likesRelations = relations(likes, ({ one }) => ({
   song: one(songs, { fields: [likes.songId], references: [songs.id] }),
   user: one(users, { fields: [likes.userId], references: [users.id] }),
 }));
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   songs: many(songs),
 }));
+
 export const songsRelations = relations(songs, ({ one, many }) => ({
   artist: one(users, { fields: [songs.artistId], references: [users.id] }),
   category: one(categories, {
@@ -229,14 +268,38 @@ export const songsRelations = relations(songs, ({ one, many }) => ({
   }),
   likes: many(likes),
   tags: many(songTags),
+  songListens: many(songListens),
 }));
+
+export const songListensRelations = relations(songListens, ({ one }) => ({
+  song: one(songs, { fields: [songListens.songId], references: [songs.id] }),
+  user: one(users, { fields: [songListens.userId], references: [users.id] }),
+}));
+
 export const songTagsRelations = relations(songTags, ({ one }) => ({
   song: one(songs, { fields: [songTags.songId], references: [songs.id] }),
   tag: one(tags, { fields: [songTags.tagId], references: [tags.id] }),
 }));
+
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }));
+
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
+
+import { InferSelectModel } from "drizzle-orm";
+
+export type User = InferSelectModel<typeof users>;
+export type Category = InferSelectModel<typeof categories>;
+export type Song = InferSelectModel<typeof songs>;
+export type SongListen = InferSelectModel<typeof songListens>;
+export type Like = InferSelectModel<typeof likes>;
+export type Tag = InferSelectModel<typeof tags>;
+export type SongTag = InferSelectModel<typeof songTags>;
+export type Follow = InferSelectModel<typeof follows>;
+export type Account = InferSelectModel<typeof accounts>;
+export type Session = InferSelectModel<typeof sessions>;
+export type VerificationToken = InferSelectModel<typeof verificationTokens>;
+export type SongWithArtistName = Song & { artistName: string };

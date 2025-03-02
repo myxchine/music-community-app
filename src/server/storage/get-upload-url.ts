@@ -1,35 +1,29 @@
 "use server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { s3Client } from "@/server/songs-storage";
-import { generateUniqueFileName } from "@/server/songs-storage/helpers";
-const validAudioTypes = [
-  "audio/mpeg",
-  "audio/mp3",
-  "audio/wav",
-  "audio/ogg",
-  "audio/flac",
-  "audio/aac",
-  "audio/m4a",
-];
+import { s3Client } from "@/server/storage";
+import { getServerAuthSession } from "@/server/auth";
+
 export async function getUploadUrl({
   fileType,
-  fileName,
+  id,
+  bucket,
 }: {
   fileType: string;
-  fileName: string;
+  id: string;
+  bucket: string;
 }): Promise<{ presignedUrl: string | null; status: Status }> {
-  if (!validAudioTypes.includes(fileType)) {
-    console.error("Invalid file type");
+  const session = await getServerAuthSession();
+  if (!session || !session.user) {
     return {
       presignedUrl: null,
-      status: { status: "error", message: "Invalid file type" },
+      status: { status: "error", message: "Please sign in to upload a song." },
     };
   }
-  const id = generateUniqueFileName(fileName);
+
   try {
     const command = new PutObjectCommand({
-      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME,
+      Bucket: bucket,
       Key: id,
       ContentType: fileType,
     });
