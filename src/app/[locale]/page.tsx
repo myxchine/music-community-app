@@ -5,9 +5,9 @@ export default async function Home() {
   const t = await getTranslations("HomePage");
   const songs = await getSongs();
   return (
-    <>
-      <div className="flex flex-col items-center justify-center"></div>
+    <div className="flex flex-col gap-4 ">
+      <h1 className="text-xl font-semibold">Latest Songs</h1>
       <SongList songs={songs} />
-    </>
+    </div>
   );
 }

@@ -8,10 +8,17 @@ import { getTranslations } from "next-intl/server";
 import Footer from "@/components/ui/footer";
 import Header from "@/components/ui/header";
 import { Toaster } from "sonner";
+import { Viewport } from "next";
 const interSans = Inter({
   variable: "--font-inter-sans",
   subsets: ["latin"],
 });
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  userScalable: false,
+  initialScale: 1,
+  maximumScale: 1,
+};
 export default async function LocaleLayout({
   params,
   children,
@@ -27,11 +34,11 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   return (
     <html lang={locale}>
-      <body className={`${interSans.variable} antialiased`}>
+      <body className={`${interSans.variable} antialiased `}>
         <NextIntlClientProvider messages={messages}>
           <MusicPlayerProvider>
             <Header />
-            <main className="w-full max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center p-4 pb-64">
+            <main className="w-full max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center p-4 pb-84">
               {children}
             </main>
             <Footer locale={locale} />

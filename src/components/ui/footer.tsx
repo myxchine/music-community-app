@@ -28,7 +28,7 @@ export default function Footer({ locale }: { locale: string }) {
     <footer className="w-full fixed bottom-0 left-0 p-2 pb-0">
       <div className="w-full max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center gap-0">
         <MusicPlayer />
-        <nav className="flex flex-row items-center justify-between gap-4 w-full p-4 bg-white pb-6">
+        <nav className="flex flex-row items-center justify-between gap-4 w-full p-4 bg-white pb-10">
           {navItems.map((item) => (
             <Link
               key={item.name}
