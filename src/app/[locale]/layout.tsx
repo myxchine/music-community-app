@@ -9,6 +9,7 @@ import Footer from "@/components/ui/footer";
 import Header from "@/components/ui/header";
 import { Toaster } from "sonner";
 import { Viewport } from "next";
+import { SessionProvider } from "next-auth/react";
 const interSans = Inter({
   variable: "--font-inter-sans",
   subsets: ["latin"],

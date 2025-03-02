@@ -6,6 +6,8 @@ import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { getSongsByArtist } from "@/server/db/utils";
 import SongList from "@/components/music/song-list";
+import { Suspense } from "react";
+import { Loading } from "@/components/loading";
 
 export default async function Account() {
   const session = await getServerAuthSession();
@@ -40,8 +42,15 @@ export default async function Account() {
 
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold">Your Songs</h2>
-        <SongList songs={songs} deleteable />
+        <Suspense fallback={<Loading />}>
+          <YourSongs session={session} />
+        </Suspense>
       </div>
     </div>
   );
+}
+
+async function YourSongs({ session }: { session: { user: { id: string } } }) {
+  const songs = await getSongsByArtist(session.user.id);
+  return <SongList songs={songs} deleteable />;
 }
