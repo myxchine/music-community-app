@@ -23,7 +23,7 @@ export default function SongComponent({
 
     if (themeColorMeta) {
       if (modelOpen) {
-        themeColorMeta.setAttribute("content", "#E6E6E6"); // 10% black
+        themeColorMeta.setAttribute("content", "#cccccc"); // 10% black
       } else {
         themeColorMeta.setAttribute("content", "#ffffff"); // white
       }

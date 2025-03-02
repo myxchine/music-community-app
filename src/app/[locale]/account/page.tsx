@@ -39,7 +39,7 @@ export default async function Account() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h2>Your Songs</h2>
+        <h2 className="text-xl font-semibold">Your Songs</h2>
         <SongList songs={songs} deleteable />
       </div>
     </div>

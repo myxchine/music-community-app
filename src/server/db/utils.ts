@@ -1,4 +1,3 @@
-//import "server-only";
 "use server";
 import { db } from "@/server/db";
 import { songs, likes, users, songListens } from "@/server/db/schema";
@@ -8,9 +7,36 @@ import { getServerAuthSession } from "@/server/auth";
 import { unauthorized } from "next/navigation";
 
 async function AuthenticatedQuery(): Promise<boolean> {
-  const session = await getServerAuthSession();
-  if (!session) return unauthorized();
+  // TODO: Check if middleware protects server functions or if extra authentication is required to protect backend server functions
+  //const session = await getServerAuthSession();
+  //if (!session) return unauthorized();
   return true;
+}
+export async function getArtists() {
+  if (!(await AuthenticatedQuery())) return [];
+  try {
+    const res = await db.select().from(users).limit(60);
+    if (!res) throw new Error("No artists found");
+    return res;
+  } catch (error) {
+    console.error("Error fetching artists:", error);
+    return [];
+  }
+}
+export async function getArtist(artistId: string) {
+  if (!(await AuthenticatedQuery())) return null;
+  try {
+    const res = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, artistId))
+      .limit(1);
+    if (!res) throw new Error("No artist found");
+    return res[0];
+  } catch (error) {
+    console.error("Error fetching artist:", error);
+    return null;
+  }
 }
 export async function getSongsByArtist(
   artistId: string
