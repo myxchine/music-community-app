@@ -111,7 +111,7 @@ export function SongUploadForm() {
         <input
           type="file"
           onChange={handleFileChange}
-          accept="audio/mpeg, audio/mp3, audio/wav, audio/ogg, .mp3, .wav, .ogg"
+          accept="audio/mpeg, audio/mp3, audio/wav, audio/ogg, .mp3, .wav, .ogg, .m4a"
           required
           className="hidden"
           id="file"

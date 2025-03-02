@@ -2,7 +2,7 @@
 
 import { SongWithArtistName } from "@/server/db/schema";
 import { useMusicPlayer } from "@/components/music/music-player-provider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MoreIcon } from "@/components/ui/icons";
 import { deleteSong } from "@/server/db/utils";
 import { toast } from "sonner";
@@ -17,6 +17,18 @@ export default function SongComponent({
 }) {
   const [modelOpen, setModelOpen] = useState(false);
   const { addToQueue, playSong } = useMusicPlayer();
+
+  useEffect(() => {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+    if (themeColorMeta) {
+      if (modelOpen) {
+        themeColorMeta.setAttribute("content", "rgba(0, 0, 0, 0.1)"); // 10% black
+      } else {
+        themeColorMeta.setAttribute("content", "#ffffff"); // white
+      }
+    }
+  }, [modelOpen]);
 
   const handleClick = () => {
     addToQueue(song);
@@ -77,9 +89,9 @@ function Modal({
     setModelOpen(false);
   };
   return (
-    <div className="flex flex-col justify-end gap-4 fixed bottom-0 left-0 w-full z-[999999999] h-[100svh] bg-black/20 backdrop-blur-md">
+    <div className="flex flex-col justify-end gap-4 fixed bottom-0 left-0 w-full z-[999999999] h-[100svh] bg-black/20 backdrop-blur-md px-2">
       <div className="max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center w-full">
-        <div className="flex flex-col gap-4 w-full items-center justify-start bg-white rounded-t-3xl p-6  h-[40svh]">
+        <div className="flex flex-col gap-4 w-full items-center justify-start bg-white rounded-t-3xl p-6  ">
           <div className="flex flex-row gap-3 w-full items-center ">
             <Image
               src={

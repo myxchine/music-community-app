@@ -35,12 +35,6 @@ export default async function Account() {
         <Link href="/upload" className="button-black">
           {t("upload new song")}
         </Link>
-      </div>
-      <div className="flex flex-col gap-4">
-        <h2>Account Actions</h2>
-        <p className="text-xs md:text-sm text-black/60 ">
-          {session.user.email}
-        </p>
         <SignOut />
       </div>
 

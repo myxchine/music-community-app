@@ -9,7 +9,7 @@ export default function SignOut() {
   return (
     <button
       onClick={() => handleSignOut()}
-      className="bg-foreground cursor-pointer uppercase text-xs md:text-sm text-background  border border-black rounded border-accent hover:bg-black hover:text-white  p-2 text-center  px-4 w-fit mt-2"
+      className="bg-foreground cursor-pointer uppercase text-xs md:text-sm text-background  border border-black rounded border-accent hover:bg-black hover:text-white  p-2 text-center  px-4 w-fit 2"
     >
       Sign Out
     </button>

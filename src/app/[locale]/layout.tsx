@@ -31,7 +31,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <MusicPlayerProvider>
             <Header />
-            <main className="w-full max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center p-4">
+            <main className="w-full max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center p-4 pb-64">
               {children}
             </main>
             <Footer locale={locale} />
