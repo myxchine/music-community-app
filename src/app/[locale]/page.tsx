@@ -26,12 +26,12 @@ export default function Home() {
   );
 }
 
-export async function LatestSongs() {
+async function LatestSongs() {
   const songs = await getSongs();
   return <SongList songs={songs} />;
 }
 
-export async function ExploreArtists() {
+async function ExploreArtists() {
   const artists = await getArtists();
   return <ArtistList artists={artists} />;
 }
