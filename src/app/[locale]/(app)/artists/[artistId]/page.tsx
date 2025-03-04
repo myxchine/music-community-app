@@ -1,5 +1,5 @@
 import { getArtist, getSongsByArtist } from "@/server/db/utils";
-import SongList from "@/components/music/song-list";
+import SongList from "@/components/music/songs/song-list";
 import { notFound } from "next/navigation";
 import { User } from "@/server/db/schema";
 import { Suspense } from "react";
