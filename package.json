@@ -14,6 +14,7 @@
     "@aws-sdk/s3-request-presigner": "^3.750.0",
     "@ffmpeg/ffmpeg": "*",
     "@ffmpeg/util": "*",
+    "@tanstack/react-query": "^5.67.1",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.0",
     "formidable": "^3.5.2",

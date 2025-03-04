@@ -6,7 +6,6 @@ import {
   useState,
   useRef,
   useEffect,
-  use,
 } from "react";
 import type { SongWithArtistName } from "@/server/db/schema";
 import { toast } from "sonner";
@@ -25,6 +24,7 @@ interface MusicPlayerContextType {
   addToQueue: (song: SongWithArtistName) => void;
   playNext: () => void;
   playPrevious: () => void;
+  resetQueue: () => void;
 }
 
 const MusicPlayerContext = createContext<MusicPlayerContextType | undefined>(
@@ -137,6 +137,10 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     toast.success("Song added to queue");
   };
 
+  const resetQueue = () => {
+    setQueue([]);
+  };
+
   useEffect(() => {
     console.log("queue", queue);
   }, [queue]);
@@ -170,6 +174,7 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     addToQueue,
     playNext,
     playPrevious,
+    resetQueue,
   };
 
   return (

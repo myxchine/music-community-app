@@ -7,13 +7,13 @@ export default function ArtistList({ artists }: { artists: User[] }) {
       {artists.map((artist) => (
         <Link
           key={artist.id}
-          className="flex flex-col items-center justify-center gap-2 w-full"
+          className="flex flex-col items-center justify-center gap-4 w-full"
           href={`/artists/${artist.id}`}
         >
           <img
             src={artist.image || "/images/default-cover.svg"}
             alt="artist image"
-            className="w-full rounded-xl aspect-square object-cover shadow"
+            className="w-full rounded-full aspect-square object-cover shadow"
           />
           <p className="text-sm">{artist.name}</p>
         </Link>

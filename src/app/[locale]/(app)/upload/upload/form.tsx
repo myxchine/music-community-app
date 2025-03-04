@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { handleFormSubmit } from "./handle-form-submit";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { loadFFmpeg } from "./ffmpeg/ffmpeg-core";
-import MusicPlayer from "..//music-player";
+import MusicPlayer from "../music-player";
 import { SongWithArtistName } from "@/server/db/schema";
 
 export function SongUploadForm() {

@@ -1,5 +1,5 @@
 "use client";
-import { useMusicPlayer } from "@/components/music/music-player-provider";
+import { useMusicPlayer } from "@/hooks/music-player-provider";
 import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import Image from "next/image";
 import { SongWithArtistName } from "@/server/db/schema";

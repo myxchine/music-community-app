@@ -1,7 +1,7 @@
 "use client";
 import { Link } from "@/i18n/routing";
 import MusicPlayer from "@/components/music/music-player";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { SearchIcon, HomeIcon, AccountIcon } from "./icons";
 const navItems = [
@@ -21,7 +21,8 @@ const navItems = [
     icon: <AccountIcon className="size-6" fill="currentColor" />,
   },
 ];
-export default function Footer({ locale }: { locale: string }) {
+export default function Footer() {
+  const locale = useLocale();
   const t = useTranslations("Global");
   const pathname = usePathname();
   return (

@@ -1,5 +1,5 @@
 "use client";
-import { useMusicPlayer } from "@/components/music/music-player-provider";
+import { useMusicPlayer } from "@/hooks/music-player-provider";
 import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import Image from "next/image";
 export default function MusicPlayer() {
@@ -18,7 +18,10 @@ export default function MusicPlayer() {
     <div className="relative text-white bg-black/80  backdrop-blur-sm  w-full overflow-hidden rounded-2xl">
       <div className=" mx-auto flex flex-row items-center p-3 pb-2 gap-2">
         <Image
-          src={`https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${currentSong.image}` || "/images/default-cover.svg"}
+          src={
+            `https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${currentSong.image}` ||
+            "/images/default-cover.svg"
+          }
           alt="song cover art"
           width={100}
           height={100}

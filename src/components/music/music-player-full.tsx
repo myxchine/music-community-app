@@ -1,7 +1,7 @@
 // TODO: create full screen music player that can be toggled on and off
 
 "use client";
-import { useMusicPlayer } from "@/components/music/music-player-provider";
+import { useMusicPlayer } from "@/hooks/music-player-provider";
 import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 export default function MusicPlayer() {
   const {
