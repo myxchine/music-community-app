@@ -1,16 +1,14 @@
 "use client";
 
-import SignOut from "@/app/[locale]/(app)/account/signout";
+import SignOut from "./signout";
 import { unauthorized } from "next/navigation";
 import { UserIcon } from "@/components/ui/icons";
 import { Link } from "@/i18n/routing";
-import { getSongsByArtist } from "@/server/db/utils";
 import SongList from "@/components/music/songs/song-list";
-import { Loading } from "@/components/loading";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useQuery } from "@tanstack/react-query";
 import { SongsLoadingSkeleton } from "@/components/music/songs/loading-skeleton";
+import { useArtistByIdQuery } from "@/hooks/useQuery";
 
 export default function Account() {
   const { data: session, status } = useSession();
@@ -61,10 +59,7 @@ function YourSongs({ session }: { session: { user: { id: string } } }) {
     data: songs,
     error,
     isError,
-  } = useQuery({
-    queryKey: [`${session.user.id}-songs`],
-    queryFn: () => getSongsByArtist(session.user.id),
-  });
+  } = useArtistByIdQuery(session.user.id);
   if (isLoading || !songs) {
     return <SongsLoadingSkeleton length={12} />;
   }

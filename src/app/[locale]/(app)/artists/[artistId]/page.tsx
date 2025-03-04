@@ -1,9 +1,7 @@
-import { getArtist, getSongsByArtist } from "@/server/db/utils";
-import SongList from "@/components/music/songs/song-list";
+import { getArtist } from "@/server/db/utils";
 import { notFound } from "next/navigation";
-import { User } from "@/server/db/schema";
-import { Suspense } from "react";
-import { Loading } from "@/components/loading";
+import { ArtistSongs } from "./artist-songs";
+import { UserIcon } from "@/components/ui/icons";
 export default async function ArtistPage({
   params,
 }: {
@@ -15,29 +13,36 @@ export default async function ArtistPage({
   if (!artist) {
     return notFound();
   }
-  const songs = await getSongsByArtist(artistId);
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex flex-col items-center justify-center gap-4 w-full p-6">
-        <img
-          src={artist.image || "/images/default-cover.svg"}
-          alt="artist image"
-          className="w-full rounded-xl aspect-square object-cover"
-        />
-        <h1 className="text-xl font-semibold">{artist.name}</h1>
+    <div className="flex flex-col w-full gap-8">
+      <div className="flex flex-row items-center justify-start gap-4  w-full ">
+        {artist.image ? (
+          <img
+            src={artist.image}
+            alt="user"
+            width={100}
+            height={100}
+            className="rounded-full size-[100px] md:size-[125px] border border-black"
+          />
+        ) : (
+          <UserIcon className="size-[100px] md:size-[125px] text-black" />
+        )}
+        <div className="flex flex-col  items-start justify-start text-left gap-2">
+          <h1>{artist.name}</h1>
+          <div className="flex flex-row items-center gap-2">
+            <button className="button-black text-xs">Follow</button>
+          </div>
+        </div>
       </div>
 
-      <h2 className="text-xl font-semibold">Songs</h2>
-      <div className="flex flex-col gap-4 w-full">
-        <Suspense fallback={<Loading />}>
-          <ArtistSongs artist={artist} />
-        </Suspense>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold">Your Songs</h2>
+          <p className="pill">Latest</p>
+        </div>
+
+        <ArtistSongs artistId={artist.id} />
       </div>
     </div>
   );
-}
-
-async function ArtistSongs({ artist }: { artist: User }) {
-  const songs = await getSongsByArtist(artist.id);
-  return <SongList songs={songs} />;
 }

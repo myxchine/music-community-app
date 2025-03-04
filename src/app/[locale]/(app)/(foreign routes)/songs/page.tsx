@@ -1,8 +1,7 @@
 "use client";
-import { getSongs, getArtists } from "@/server/db/utils";
 import SongList from "@/components/music/songs/song-list";
-import { useQuery } from "@tanstack/react-query";
 import { SongsLoadingSkeleton } from "@/components/music/songs/loading-skeleton";
+import { useSongsQuery } from "@/hooks/useQuery";
 export default function Home() {
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -15,12 +14,7 @@ export default function Home() {
 }
 
 function AllSongs() {
-  const {
-    isLoading,
-    data: songs,
-    error,
-    isError,
-  } = useQuery({ queryKey: ["songs"], queryFn: getSongs });
+  const { isLoading, data: songs, error, isError } = useSongsQuery();
   if (isLoading || !songs) {
     return <SongsLoadingSkeleton length={12} />;
   }

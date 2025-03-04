@@ -1,11 +1,10 @@
 "use client";
-import { getSongs, getArtists } from "@/server/db/utils";
 import SongList from "@/components/music/songs/song-list";
 import ArtistList from "@/components/music/artist-list";
-import { useQuery } from "@tanstack/react-query";
 import { SongsLoadingSkeleton } from "@/components/music/songs/loading-skeleton";
 import { Loading } from "@/components/loading";
 import { Link } from "@/i18n/routing";
+import { useArtistsQuery, useSongsQuery } from "@/hooks/useQuery";
 export default function Home() {
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -14,12 +13,11 @@ export default function Home() {
         <LatestSongs />
         <Link
           href="/songs"
-          className="w-fit px-4 py-2 rounded-full border border-black hover:bg-black hover:text-white mx-auto"
+          className="w-fit px-4 py-2 text-xs rounded-full border border-black hover:bg-black hover:text-white mx-auto"
         >
-          See all songs
+          See More
         </Link>
       </div>
-
       <div className="flex flex-col gap-4 w-full">
         <h2 className="text-xl font-semibold">Explore Artists</h2>
         <ExploreArtists />
@@ -29,12 +27,7 @@ export default function Home() {
 }
 
 function LatestSongs() {
-  const {
-    isLoading,
-    data: songs,
-    error,
-    isError,
-  } = useQuery({ queryKey: ["songs"], queryFn: getSongs });
+  const { isLoading, data: songs, error, isError } = useSongsQuery();
   if (isLoading || !songs) {
     return <SongsLoadingSkeleton length={3} />;
   }
@@ -45,12 +38,7 @@ function LatestSongs() {
 }
 
 function ExploreArtists() {
-  const {
-    isLoading,
-    data: artists,
-    error,
-    isError,
-  } = useQuery({ queryKey: ["artists"], queryFn: getArtists });
+  const { isLoading, data: artists, error, isError } = useArtistsQuery();
   if (isLoading || !artists) {
     return <Loading />;
   }
