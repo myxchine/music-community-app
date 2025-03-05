@@ -6,24 +6,20 @@ import Header from "@/components/ui/header";
 import { Toaster } from "sonner";
 import Footer from "@/components/ui/footer";
 
-export default function WebApp({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function WebApp({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
   return (
-    <SessionProvider>
-      <MusicPlayerProvider>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <MusicPlayerProvider>
           <Header />
           <main className="w-full max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center p-4 pb-84">
             {children}
           </main>
           <Footer />
           <Toaster position="top-center" />
-        </QueryClientProvider>
-      </MusicPlayerProvider>
-    </SessionProvider>
+        </MusicPlayerProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }

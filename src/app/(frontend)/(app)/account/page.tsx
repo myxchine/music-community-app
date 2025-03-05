@@ -1,6 +1,6 @@
 "use client";
 import SignOut from "./signout";
-import { redirect, unauthorized } from "next/navigation";
+import { redirect } from "next/navigation";
 import { UserIcon } from "@/components/ui/icons";
 import Link from "next/link";
 import SongList from "@/components/music/songs/song-list";

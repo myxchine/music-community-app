@@ -10,6 +10,7 @@ export const useSongsQuery = () => {
   return useQuery({
     queryKey: ["songs"],
     queryFn: getSongs,
+    gcTime: 60 * 60 * 1000,
     staleTime: 60 * 60 * 1000,
     retry: 2,
   });
@@ -19,6 +20,7 @@ export const useArtistsQuery = () => {
   return useQuery({
     queryKey: ["artists"],
     queryFn: getArtists,
+    gcTime: 60 * 60 * 1000,
     staleTime: 60 * 60 * 1000,
     retry: 2,
   });
@@ -29,6 +31,7 @@ export const useArtistSongsByIdQuery = (artistId: string) => {
     queryKey: ["artist", artistId, "songs"],
     queryFn: () => getSongsByArtist(artistId),
     staleTime: 60 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
     retry: 2,
     enabled: !!artistId,
   });
@@ -39,6 +42,7 @@ export const useArtistByIdQuery = (artistId: string) => {
     queryKey: ["artist", artistId],
     queryFn: () => getArtist(artistId),
     staleTime: 60 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
     retry: 2,
     enabled: !!artistId,
   });

@@ -6,11 +6,11 @@ import { Loading } from "@/components/loading";
 import Link from "next/link";
 import { useArtistsQuery, useSongsQuery } from "@/hooks/useQuery";
 import { useSession } from "next-auth/react";
-import { redirect, unauthorized } from "next/navigation";
+import { redirect } from "next/navigation";
 export default function Home() {
   const session = useSession();
   if (session.status === "unauthenticated") {
-    return redirect("/signin");
+    return redirect("/");
   }
   if (session.status === "loading") {
     return <Loading />;
