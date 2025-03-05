@@ -1,4 +1,6 @@
-import SongUploadComponent from "@/app/(frontend)/(app)/upload/upload";
+"use client";
+
+import SongUploadComponent from "./upload";
 import { Loading } from "@/components/loading";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
