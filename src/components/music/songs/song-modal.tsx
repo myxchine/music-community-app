@@ -21,7 +21,6 @@ export function Modal({
       toast.error("Failed to delete song");
       return;
     }
-
     const success = await deleteSong({ song });
     if (!success) {
       toast.error("Failed to delete song");
@@ -58,7 +57,9 @@ export function Modal({
           >
             Add to queue
           </button>
-          <button className="w-full button-black">Like song</button>
+          <button className="w-full button-black"
+          onClick={()=> toast.success("Liking songs feature coming soon")}
+          >Like song</button>
           {deleteable && (
             <button onClick={handleDelete} className="button-black w-full">
               Delete Song

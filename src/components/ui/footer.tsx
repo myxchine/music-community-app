@@ -1,13 +1,13 @@
 "use client";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import MusicPlayer from "@/components/music/music-player";
-import { useLocale, useTranslations } from "next-intl";
+
 import { usePathname } from "next/navigation";
 import { SearchIcon, HomeIcon, AccountIcon } from "./icons";
 const navItems = [
   {
     name: "home",
-    href: "/",
+    href: "/home",
     icon: <HomeIcon className="size-6" fill="currentColor" />,
   },
   {
@@ -22,8 +22,6 @@ const navItems = [
   },
 ];
 export default function Footer() {
-  const locale = useLocale();
-  const t = useTranslations("Global");
   const pathname = usePathname();
   return (
     <footer className="w-full fixed bottom-0 left-0 p-2 pb-0">
@@ -34,15 +32,14 @@ export default function Footer() {
             <Link
               key={item.name}
               className={
-                pathname ===
-                "/" + locale + (item.href.length > 1 ? item.href : "")
+                pathname === (item.href.length > 1 ? item.href : "")
                   ? navItemStyles.active
                   : navItemStyles.inactive
               }
               href={item.href}
             >
               {item.icon}
-              {t(item.name)}
+              {item.name}
             </Link>
           ))}
         </nav>

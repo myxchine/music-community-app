@@ -19,40 +19,21 @@ declare module "next-auth" {
       id: string;
     } & DefaultSession["user"];
   }
-  interface User {
-    role: string;
-  }
 }
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    jwt: async ({ token, user, account }) => {
-      if (user) {
-        token.id = user.id;
-        const dbUser = await db.query.users.findFirst({
-          where: (users, { eq }) => eq(users.id, user.id),
-        });
-        if (dbUser) {
-          token.name = dbUser.name;
-          token.image = dbUser.image;
-        }
-      }
-      return token;
-    },
-    session: ({ session, token }) => {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.name = token.name as string;
-        session.user.image = token.image as string;
-      }
-      return session;
-    },
+    session: ({ session, user }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: user.id,
+      },
+    }),
   },
   pages: {
-    signIn: "/en/signin",
+    signIn: "/signin",
   },
-  session: {
-    strategy: "jwt",
-  },
+
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,

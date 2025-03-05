@@ -48,7 +48,7 @@ export default function SongComponent({
           height={100}
           priority
           alt="song cover art"
-          className="w-18 object-cover aspect-square bg-black/5 rounded-xl"
+          className="w-18 h-18 object-cover aspect-square bg-black/5 rounded-xl"
         />
         <div className="flex flex-col gap-0 w-full">
           <p>{song.title}</p>

@@ -1,27 +1,19 @@
 "use client";
-import { SessionProvider, useSession } from "next-auth/react";
-import { unauthorized } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MusicPlayerProvider } from "@/hooks/music-player-provider";
 import Header from "@/components/ui/header";
 import { Toaster } from "sonner";
 import Footer from "@/components/ui/footer";
-export default function AuthSessionProvider({
+
+export default function WebApp({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = useSession();
-  if (session.status === "unauthenticated") {
-    return unauthorized();
-  }
-  if (session.status === "loading") {
-    return <div>Loading...</div>;
-  }
-
   const queryClient = new QueryClient();
   return (
-    <SessionProvider session={session.data}>
+    <SessionProvider>
       <MusicPlayerProvider>
         <QueryClientProvider client={queryClient}>
           <Header />

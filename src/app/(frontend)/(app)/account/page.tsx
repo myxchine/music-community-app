@@ -1,21 +1,24 @@
 "use client";
-
 import SignOut from "./signout";
-import { unauthorized } from "next/navigation";
+import { redirect, unauthorized } from "next/navigation";
 import { UserIcon } from "@/components/ui/icons";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import SongList from "@/components/music/songs/song-list";
 import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
 import { SongsLoadingSkeleton } from "@/components/music/songs/loading-skeleton";
-import { useArtistByIdQuery } from "@/hooks/useQuery";
-
+import { useArtistSongsByIdQuery } from "@/hooks/useQuery";
+import { Loading } from "@/components/loading";
 export default function Account() {
   const { data: session, status } = useSession();
-  if (!session) {
-    unauthorized();
+  if (status === "unauthenticated") {
+    redirect("/");
   }
-  const t = useTranslations("AccountPage");
+  if (status === "loading") {
+    return <Loading />;
+  }
+  if (!session) {
+    return redirect("/");
+  }
   return (
     <div className="flex flex-col w-full gap-8">
       <div className="flex flex-row items-center justify-start gap-4  w-full ">
@@ -25,7 +28,7 @@ export default function Account() {
             alt="user"
             width={100}
             height={100}
-            className="rounded-full size-[100px] md:size-[125px] border border-black"
+            className="rounded-full size-[100px] md:size-[125px] border border-black object-cover"
           />
         ) : (
           <UserIcon className="size-[100px] md:size-[125px] text-black" />
@@ -34,7 +37,7 @@ export default function Account() {
           <h1>{session.user.name}</h1>
           <div className="flex flex-row items-center gap-2">
             <Link href="/upload" className="button-black text-xs">
-              {t("upload new song")}
+              {"upload new song"}
             </Link>
             <SignOut />
           </div>
@@ -59,7 +62,7 @@ function YourSongs({ session }: { session: { user: { id: string } } }) {
     data: songs,
     error,
     isError,
-  } = useArtistByIdQuery(session.user.id);
+  } = useArtistSongsByIdQuery(session.user.id);
   if (isLoading || !songs) {
     return <SongsLoadingSkeleton length={12} />;
   }

@@ -10,6 +10,8 @@ export async function handleFormSubmit({
   title,
   ffmpegRef,
   coverArt,
+  invalidateSongs,
+  invalidateArtistSongs,
 }: {
   file: File;
   setStatus: (status: Status) => void;
@@ -17,6 +19,8 @@ export async function handleFormSubmit({
   title: string;
   ffmpegRef: React.RefObject<FFmpeg>;
   coverArt: File;
+  invalidateSongs: () => void;
+  invalidateArtistSongs: () => void;
 }) {
   if (!file) {
     setStatus({ status: "error", message: "Please select a file." });
@@ -80,10 +84,10 @@ export async function handleFormSubmit({
 
   let song;
 
-  const audioId = generateUniqueFileName({
-    fileName: compressedAudioFile.name,
-  });
-  const imageId = generateUniqueFileName({ fileName: coverArt.name });
+  const uniqueId = generateUniqueFileName();
+
+  const audioId = `${uniqueId}.${compressedAudioFile.name.split(".")[1]}`;
+  const imageId = `${uniqueId}.${coverArt.name.split(".")[1]}`;
 
   try {
     const res = await newSong({
@@ -138,6 +142,8 @@ export async function handleFormSubmit({
       },
     });
     if (!uploadImage.ok) throw new Error("Upload failed");
+    invalidateSongs();
+    invalidateArtistSongs();
     setStatus({ status: "success", message: "File has been uploaded." });
   } catch (error) {
     console.error("Upload to R2 error:", error);

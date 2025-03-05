@@ -11,13 +11,11 @@ export async function GET(req: Request) {
       { status: 400 }
     );
   }
-
   try {
     const getObjectParams = {
       Bucket: process.env.CLOUDFLARE_R2_AUDIO_BUCKET_NAME,
       Key: filename,
     };
-
     const command = new GetObjectCommand(getObjectParams);
     const response = await s3Client.send(command);
 
@@ -27,10 +25,8 @@ export async function GET(req: Request) {
         { status: 404 }
       );
     }
-
-    const contentType = response.ContentType || "audio/ogg";
+    const contentType = response.ContentType || "audio/mpeg";
     const contentLength = response.ContentLength || 0;
-
     const headers: Record<string, string> = {
       "Content-Type": contentType,
       "Content-Length": contentLength.toString(),
@@ -60,7 +56,6 @@ export async function GET(req: Request) {
         });
       },
     });
-
     return new NextResponse(webStream, {
       status: 200,
       headers,

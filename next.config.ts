@@ -1,26 +1,6 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
-
-const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  experimental: {
-    authInterrupts: true,
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-    config.module.rules.push({
-      test: /\.wasm$/,
-      type: "javascript/auto",
-      loader: "file-loader",
-    });
-    return config;
-  },
   images: {
     remotePatterns: [
       {
@@ -32,4 +12,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default nextConfig;

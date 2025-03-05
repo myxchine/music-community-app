@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { User } from "@/server/db/schema";
 
 export default function ArtistList({ artists }: { artists: User[] }) {

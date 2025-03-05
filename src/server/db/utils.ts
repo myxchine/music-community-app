@@ -7,9 +7,8 @@ import { getServerAuthSession } from "@/server/auth";
 import { unauthorized } from "next/navigation";
 
 async function AuthenticatedQuery(): Promise<boolean> {
-  // TODO: Check if middleware protects server functions or if extra authentication is required to protect backend server functions
-  //const session = await getServerAuthSession();
-  //if (!session) return unauthorized();
+  const session = await getServerAuthSession();
+  if (!session) return unauthorized();
   return true;
 }
 export async function getArtists() {

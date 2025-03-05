@@ -3,9 +3,18 @@ import SongList from "@/components/music/songs/song-list";
 import ArtistList from "@/components/music/artist-list";
 import { SongsLoadingSkeleton } from "@/components/music/songs/loading-skeleton";
 import { Loading } from "@/components/loading";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { useArtistsQuery, useSongsQuery } from "@/hooks/useQuery";
+import { useSession } from "next-auth/react";
+import { redirect, unauthorized } from "next/navigation";
 export default function Home() {
+  const session = useSession();
+  if (session.status === "unauthenticated") {
+    return redirect("/signin");
+  }
+  if (session.status === "loading") {
+    return <Loading />;
+  }
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-col gap-4 w-full">

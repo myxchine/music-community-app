@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @theme {
   --font-sans: var(--font-inter-sans);
+  --font-accent: var(--font-accent);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 }
 :root {
   --background: #ffffff;
@@ -9,16 +12,13 @@
   --max-width: 32rem;
 }
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-sans);
-  text-wrap: balance;
+  @apply bg-background text-foreground font-sans;
 }
 .button-black {
   @apply bg-black text-white px-4 py-2 rounded-lg border border-black hover:bg-black/80;
 }
 .button-white {
-  @apply   px-4 py-2 rounded-lg border border-black hover:bg-black/20;
+  @apply px-4 py-2 rounded-lg border border-black hover:bg-black/20;
 }
 .heading1 {
   @apply text-2xl font-bold uppercase;
@@ -35,7 +35,7 @@ button {
 }
 
 .pill {
-  @apply px-3 py-1 rounded-full text-xs border border-black/60 text-black/60 w-fit
+  @apply px-3 py-1 rounded-full text-xs border border-black/60 text-black/60 w-fit;
 }
 
 /* Music Player */
