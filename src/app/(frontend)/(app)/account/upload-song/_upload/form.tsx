@@ -5,7 +5,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { loadFFmpeg } from "./ffmpeg/ffmpeg-core";
 import MusicPlayer from "../music-player";
 import { SongWithArtistName } from "@/server/db/schema";
-import { useInvalidateSongs, useInvalidateArtistSongs } from "@/hooks/useQuery";
+//import { useInvalidateSongs, useInvalidateArtistSongs } from "@/hooks/useQuery";
 
 export function SongUploadForm({ userId }: { userId: string }) {
   const [audioPreview, setAudioPreview] = useState<SongWithArtistName | null>(
@@ -22,8 +22,8 @@ export function SongUploadForm({ userId }: { userId: string }) {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [FFmpegLoaded, setFFmpwgLoaded] = useState(false);
-  const { invalidateSongs } = useInvalidateSongs();
-  const { invalidateArtistSongs } = useInvalidateArtistSongs(userId);
+  //const { invalidateSongs } = useInvalidateSongs();
+  //const { invalidateArtistSongs } = useInvalidateArtistSongs(userId);
 
   useEffect(() => {
     load();
@@ -88,8 +88,7 @@ export function SongUploadForm({ userId }: { userId: string }) {
       setIsUploading,
       title,
       ffmpegRef,
-      invalidateSongs,
-      invalidateArtistSongs,
+   
     });
   };
 

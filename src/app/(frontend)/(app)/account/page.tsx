@@ -36,7 +36,7 @@ export default function Account() {
         <div className="flex flex-col  items-start justify-start text-left gap-2">
           <h1>{session.user.name}</h1>
           <div className="flex flex-row items-center gap-2">
-            <Link href="/upload" className="button-black text-xs">
+            <Link href="/account/upload-song" className="button-black text-xs">
               {"upload new song"}
             </Link>
             <SignOut />
