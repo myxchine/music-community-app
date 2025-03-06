@@ -6,19 +6,20 @@ import Header from "@/components/ui/header";
 import { Toaster } from "sonner";
 import Footer from "@/components/ui/footer";
 
-export default function WebApp({ children }: { children: React.ReactNode }) {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        refetchOnMount: false,
-        retry: 1,
-        staleTime: 60 * 60 * 1000,
-        gcTime: 60 * 60 * 1000,
-      },
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      retry: 1,
+      staleTime: 60 * 60 * 1000,
+      gcTime: 60 * 60 * 1000,
     },
-  });
+  },
+});
+
+export default function WebApp({ children }: { children: React.ReactNode }) {
   console.log(queryClient);
   return (
     <QueryClientProvider client={queryClient}>
