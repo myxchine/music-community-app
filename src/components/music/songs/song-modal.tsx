@@ -5,8 +5,10 @@ import Image from "next/image";
 import { deleteSong } from "@/server/db/utils";
 import { toast } from "sonner";
 import { getSession, useSession } from "next-auth/react";
-import { useSongLikeMutation } from "@/hooks/useQuery";
-import { useInvalidateSongs, useInvalidateArtistSongs } from "@/hooks/useQuery";
+import {
+  useInvalidateSongDeletion,
+  useSongLikeMutation,
+} from "@/hooks/useQuery";
 export function Modal({
   song,
   deleteable,
@@ -18,8 +20,7 @@ export function Modal({
   setModelOpen: (open: boolean) => void;
   addToQueue: (song: SongWithArtistName) => void;
 }) {
-  const { invalidateSongs } = useInvalidateSongs();
-  const { invalidateArtistSongs } = useInvalidateArtistSongs(song.artistId);
+  const { invalidateSongDeletion } = useInvalidateSongDeletion();
   const handleDelete = async () => {
     const session = await getSession();
     if (!session?.user?.id) {
@@ -38,8 +39,7 @@ export function Modal({
       toast.error("Failed to delete song");
       return;
     }
-    invalidateSongs();
-    invalidateArtistSongs();
+    invalidateSongDeletion();
     toast.success("Song deleted successfully");
     setModelOpen(false);
   };

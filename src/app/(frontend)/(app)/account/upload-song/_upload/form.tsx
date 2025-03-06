@@ -1,11 +1,13 @@
 "use client";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, use } from "react";
 import { handleFormSubmit } from "./handle-form-submit";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { loadFFmpeg } from "./ffmpeg/ffmpeg-core";
 import { SongWithArtistName } from "@/server/db/schema";
-import { useInvalidateSongs, useInvalidateArtistSongs } from "@/hooks/useQuery";
 import { useMusicPlayer } from "@/hooks/music-player-provider";
+import {
+  useInvalidateSongDeletion
+} from "@/hooks/useQuery";
 export function SongUploadForm({
   userId,
   userName,
@@ -13,6 +15,7 @@ export function SongUploadForm({
   userId: string;
   userName: string;
 }) {
+  const { invalidateSongDeletion } = useInvalidateSongDeletion()
   const [audioPreview, setAudioPreview] = useState<SongWithArtistName | null>(
     null
   );
@@ -27,8 +30,7 @@ export function SongUploadForm({
   });
   const [isUploading, setIsUploading] = useState(false);
   const [FFmpegLoaded, setFFmpwgLoaded] = useState(false);
-  const { invalidateSongs } = useInvalidateSongs();
-  const { invalidateArtistSongs } = useInvalidateArtistSongs(userId);
+
   const { addToQueue, resetQueue } = useMusicPlayer();
 
   useEffect(() => {
@@ -94,6 +96,7 @@ export function SongUploadForm({
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
+          console.log(e.target.result);
           setCoverArtPreview(e.target.result as string);
         }
       };
@@ -117,8 +120,7 @@ export function SongUploadForm({
       setIsUploading,
       title,
       ffmpegRef,
-      invalidateSongs,
-      invalidateArtistSongs,
+      invalidateSongDeletion,
     });
   };
 
@@ -163,6 +165,7 @@ export function SongUploadForm({
             onChange={handleCoverArtChange}
             accept="image/*"
             className="hidden"
+            required
             id="coverArt"
           />
         </label>

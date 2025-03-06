@@ -106,6 +106,7 @@ export const useInvalidateSongs = () => {
   const queryClient = useQueryClient();
 
   const invalidateSongs = () => {
+    console.log("invalidating all songs");
     queryClient.invalidateQueries({ queryKey: ["songs"] });
   };
 
@@ -126,8 +127,22 @@ export const useInvalidateArtistSongs = (artistId: string) => {
   const queryClient = useQueryClient();
 
   const invalidateArtistSongs = () => {
+    console.log("invalidating artist songs for:", artistId);
     queryClient.invalidateQueries({ queryKey: ["artist", artistId, "songs"] });
   };
 
   return { invalidateArtistSongs };
+};
+
+export const useInvalidateSongDeletion = () => {
+  const queryClient = useQueryClient();
+
+  const invalidateSongDeletion = () => {
+    queryClient.invalidateQueries({ queryKey: ["songs"] });
+    queryClient.invalidateQueries({ queryKey: ["likedSongs"] });
+    queryClient.invalidateQueries({ queryKey: ["artist", undefined, "songs"] });
+    queryClient.invalidateQueries({ queryKey: ["artists"] });
+  };
+
+  return { invalidateSongDeletion };
 };

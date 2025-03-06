@@ -10,8 +10,7 @@ export async function handleFormSubmit({
   title,
   ffmpegRef,
   coverArt,
-  invalidateSongs,
-  invalidateArtistSongs,
+  invalidateSongDeletion,
 }: {
   file: File;
   setStatus: (status: Status) => void;
@@ -19,8 +18,7 @@ export async function handleFormSubmit({
   title: string;
   ffmpegRef: React.RefObject<FFmpeg>;
   coverArt: File;
-  invalidateSongs: () => void;
-  invalidateArtistSongs: () => void;
+  invalidateSongDeletion: () => void;
 }) {
   if (!file) {
     setStatus({ status: "error", message: "Please select a file." });
@@ -31,6 +29,7 @@ export async function handleFormSubmit({
     status: "neutral",
     message: "Please wait while your song is uploading",
   });
+
   const fileType = file.type;
 
   const isAudioFile = fileType.startsWith("audio/");
@@ -142,8 +141,7 @@ export async function handleFormSubmit({
       },
     });
     if (!uploadImage.ok) throw new Error("Upload failed");
-    invalidateSongs();
-    invalidateArtistSongs();
+    invalidateSongDeletion();
     setStatus({ status: "success", message: "File has been uploaded." });
   } catch (error) {
     console.error("Upload to R2 error:", error);

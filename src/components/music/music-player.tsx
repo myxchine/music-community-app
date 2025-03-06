@@ -24,9 +24,12 @@ export default function MusicPlayer() {
       <div className=" mx-auto flex flex-row items-center p-3 pb-2 gap-2">
         <Image
           src={
-            currentSong.image?.startsWith("blob:")
-              ? currentSong.image
-              : currentSong.image || songImage
+            currentSong.image
+              ? currentSong.image.startsWith("data:") ||
+                currentSong.image.startsWith("/images")
+                ? currentSong.image
+                : songImage
+              : "/images/default-cover.svg"
           }
           alt="song cover art"
           width={100}
