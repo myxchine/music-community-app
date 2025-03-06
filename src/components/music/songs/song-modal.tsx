@@ -8,19 +8,28 @@ import { getSession, useSession } from "next-auth/react";
 import {
   useInvalidateSongDeletion,
   useSongLikeMutation,
+  useSongsQuery,
+  useArtistSongsByIdQuery,
+  useLikedSongsQuery,
 } from "@/hooks/useQuery";
 export function Modal({
   song,
   deleteable,
   setModelOpen,
   addToQueue,
+  userId,
 }: {
   song: SongWithArtistName;
   deleteable?: boolean;
   setModelOpen: (open: boolean) => void;
   addToQueue: (song: SongWithArtistName) => void;
+  userId: string;
 }) {
   const { invalidateSongDeletion } = useInvalidateSongDeletion();
+  const { refetch: refetchSongs } = useSongsQuery();
+  const { refetch: refetchArtistSongs } = useArtistSongsByIdQuery(userId);
+  const { refetch: refetchLikedSongs } = useLikedSongsQuery(userId);
+
   const handleDelete = async () => {
     const session = await getSession();
     if (!session?.user?.id) {
@@ -40,6 +49,9 @@ export function Modal({
       return;
     }
     invalidateSongDeletion();
+    refetchArtistSongs();
+    refetchSongs();
+    refetchLikedSongs();
     toast.success("Song deleted successfully");
     setModelOpen(false);
   };
@@ -58,7 +70,7 @@ export function Modal({
     songId: song.id,
     userId: session.data.user.id,
   });
-  const handleLikeSong = () => {
+  const handleLikeSong = async () => {
     mutate();
     setModelOpen(false);
   };

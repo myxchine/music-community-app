@@ -68,11 +68,13 @@ export const useSongLikeMutation = ({
   songId: string;
 }) => {
   const { invalidateSong } = useInvalidateSong(songId);
+  const { refetch: refetchLikedSongs } = useLikedSongsQuery(userId);
   return useMutation({
     mutationFn: () => likeSong({ userId, songId }),
     mutationKey: ["likeSong", songId, userId],
     onSuccess: (data) => {
       invalidateSong();
+      refetchLikedSongs();
       if (data && data.success && data.delta === 1) {
         toast.success("Song liked successfully");
         return;
@@ -132,6 +134,17 @@ export const useInvalidateArtistSongs = (artistId: string) => {
   };
 
   return { invalidateArtistSongs };
+};
+
+export const useInvalidateLikedSongs = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  const invalidateSongsLiked = () => {
+    console.log("invalidating liked songs");
+    queryClient.invalidateQueries({ queryKey: ["likedSongs", userId] });
+  };
+
+  return { invalidateSongsLiked };
 };
 
 export const useInvalidateSongDeletion = () => {

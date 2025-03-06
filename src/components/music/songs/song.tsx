@@ -12,6 +12,8 @@ import {
 import Image from "next/image";
 import { Modal } from "./song-modal";
 import { useSongLikeStatusQuery } from "@/hooks/useQuery";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 export default function SongComponent({
   song,
   deleteable,
@@ -19,6 +21,16 @@ export default function SongComponent({
   song: SongWithArtistName;
   deleteable?: boolean;
 }) {
+  const { data: session, status } = useSession();
+  if (status === "unauthenticated") {
+    redirect("/");
+  }
+  if (status === "loading") {
+    return <Loading />;
+  }
+  if (!session) {
+    return redirect("/");
+  }
   const [modelOpen, setModelOpen] = useState(false);
   const { addToQueue, playSong, resetQueue } = useMusicPlayer();
 
@@ -74,6 +86,7 @@ export default function SongComponent({
           deleteable={deleteable}
           setModelOpen={setModelOpen}
           addToQueue={addToQueue}
+          userId={session.user.id}
         />
       )}
     </div>

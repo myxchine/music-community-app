@@ -1,13 +1,17 @@
 "use client";
-import { useState, useRef, useEffect, useCallback, use } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { handleFormSubmit } from "./handle-form-submit";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { loadFFmpeg } from "./ffmpeg/ffmpeg-core";
 import { SongWithArtistName } from "@/server/db/schema";
 import { useMusicPlayer } from "@/hooks/music-player-provider";
 import {
-  useInvalidateSongDeletion
+  useArtistSongsByIdQuery,
+  useInvalidateSongDeletion,
+  useSongsQuery,
+  useLikedSongsQuery,
 } from "@/hooks/useQuery";
+import { useRouter } from "next/navigation";
 export function SongUploadForm({
   userId,
   userName,
@@ -15,7 +19,11 @@ export function SongUploadForm({
   userId: string;
   userName: string;
 }) {
-  const { invalidateSongDeletion } = useInvalidateSongDeletion()
+  const router = useRouter();
+  const { invalidateSongDeletion } = useInvalidateSongDeletion();
+  const { refetch: refetchSongs } = useSongsQuery();
+  const { refetch: refetchArtistSongs } = useArtistSongsByIdQuery(userId);
+  const { refetch: refetchLikedSongs } = useLikedSongsQuery(userId);
   const [audioPreview, setAudioPreview] = useState<SongWithArtistName | null>(
     null
   );
@@ -104,7 +112,7 @@ export function SongUploadForm({
     }
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file || !title || !coverArt) {
       setStatus({
@@ -113,7 +121,7 @@ export function SongUploadForm({
       });
       return;
     }
-    handleFormSubmit({
+    await handleFormSubmit({
       file,
       coverArt,
       setStatus,
@@ -121,7 +129,15 @@ export function SongUploadForm({
       title,
       ffmpegRef,
       invalidateSongDeletion,
+      refetchSongs,
+      refetchArtistSongs,
+      refetchLikedSongs,
+      router,
     });
+
+    refetchArtistSongs();
+    refetchSongs();
+    refetchLikedSongs();
   };
 
   return (

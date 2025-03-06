@@ -3,6 +3,7 @@ import { newSong, deleteSong } from "@/server/db/utils";
 import { generateUniqueFileName } from "@/server/storage/helpers";
 import type { FFmpeg } from "@ffmpeg/ffmpeg";
 import { convertToMp3 } from "./ffmpeg/audio-converter";
+import type { useRouter } from "next/navigation";
 export async function handleFormSubmit({
   file,
   setStatus,
@@ -11,6 +12,10 @@ export async function handleFormSubmit({
   ffmpegRef,
   coverArt,
   invalidateSongDeletion,
+  refetchSongs,
+  refetchArtistSongs,
+  refetchLikedSongs,
+  router,
 }: {
   file: File;
   setStatus: (status: Status) => void;
@@ -19,6 +24,10 @@ export async function handleFormSubmit({
   ffmpegRef: React.RefObject<FFmpeg>;
   coverArt: File;
   invalidateSongDeletion: () => void;
+  refetchSongs: () => void;
+  refetchArtistSongs: () => void;
+  refetchLikedSongs: () => void;
+  router: ReturnType<typeof useRouter>;
 }) {
   if (!file) {
     setStatus({ status: "error", message: "Please select a file." });
@@ -142,7 +151,11 @@ export async function handleFormSubmit({
     });
     if (!uploadImage.ok) throw new Error("Upload failed");
     invalidateSongDeletion();
+    refetchSongs();
+    refetchArtistSongs();
+    refetchLikedSongs();
     setStatus({ status: "success", message: "File has been uploaded." });
+    router.push("/account");
   } catch (error) {
     console.error("Upload to R2 error:", error);
     console.log("Deleting song record from database");
