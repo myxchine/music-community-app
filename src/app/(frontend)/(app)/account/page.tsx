@@ -58,12 +58,12 @@ export default function Account() {
 
 function YourSongs({ session }: { session: { user: { id: string } } }) {
   const {
-    isLoading,
+    isFetching,
     data: songs,
     error,
     isError,
   } = useArtistSongsByIdQuery(session.user.id);
-  if (isLoading || !songs) {
+  if (isFetching || !songs) {
     return <SongsLoadingSkeleton length={12} />;
   }
   if (isError || !songs) {

@@ -27,8 +27,13 @@ export default function LikedSongsPage() {
 }
 
 function LikedSongs({ userId }: { userId: string }) {
-  const { isLoading, data: songs, error, isError } = useLikedSongsQuery(userId);
-  if (isLoading || !songs) {
+  const {
+    isFetching,
+    data: songs,
+    error,
+    isError,
+  } = useLikedSongsQuery(userId);
+  if (isFetching || !songs) {
     return <SongsLoadingSkeleton length={12} />;
   }
   if (isError || !songs) {

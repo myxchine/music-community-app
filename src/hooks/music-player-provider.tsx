@@ -71,6 +71,8 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     audioRef.current.src = audioUrl;
     audioRef.current.load();
 
+    setMediaPlayerMetadata(currentSong);
+
     if (isPlaying) {
       audioRef.current.play().catch((error) => {
         console.error("Playback failed:", error);
@@ -193,3 +195,21 @@ export const useMusicPlayer = () => {
   }
   return context;
 };
+
+function setMediaPlayerMetadata(song: SongWithArtistName) {
+  const meta = new MediaMetadata({
+    title: song.title,
+    artist: song.artistName,
+    album: "V E R Z E S",
+    artwork: [
+      {
+        src:
+          `https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${song.image}` ||
+          "/images/default-cover.svg",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+  });
+  navigator.mediaSession.metadata = meta;
+}

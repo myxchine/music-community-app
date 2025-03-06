@@ -36,8 +36,8 @@ export default function Home() {
 }
 
 function LatestSongs() {
-  const { isLoading, data: songs, error, isError } = useSongsQuery();
-  if (isLoading || !songs) {
+  const { isFetching, data: songs, error, isError } = useSongsQuery();
+  if (isFetching || !songs) {
     return <SongsLoadingSkeleton length={3} />;
   }
   if (isError || !songs) {
@@ -47,8 +47,8 @@ function LatestSongs() {
 }
 
 function ExploreArtists() {
-  const { isLoading, data: artists, error, isError } = useArtistsQuery();
-  if (isLoading || !artists) {
+  const { isFetching, data: artists, error, isError } = useArtistsQuery();
+  if (isFetching || !artists) {
     return <Loading />;
   }
   if (isError || !artists) {

@@ -24,8 +24,8 @@ export default function Home() {
 }
 
 function AllSongs() {
-  const { isLoading, data: songs, error, isError } = useSongsQuery();
-  if (isLoading || !songs) {
+  const { isFetching, data: songs, error, isError } = useSongsQuery();
+  if (isFetching || !songs) {
     return <SongsLoadingSkeleton length={12} />;
   }
   if (isError || !songs) {
