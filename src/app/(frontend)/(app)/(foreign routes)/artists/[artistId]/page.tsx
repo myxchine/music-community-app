@@ -6,10 +6,25 @@ import { useParams } from "next/navigation";
 import { useArtistByIdQuery } from "@/hooks/useQuery";
 import { Loading } from "@/components/loading";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 export default function ArtistPage() {
+  const { data: session, status } = useSession();
+  if (status === "unauthenticated") {
+    redirect("/");
+  }
+  if (status === "loading") {
+    return <Loading />;
+  }
+  if (!session) {
+    return redirect("/");
+  }
   const artistId = useParams().artistId;
   if (!artistId || typeof artistId !== "string") {
     return notFound();
+  }
+  if (artistId === session.user.id) {
+    return redirect("/account");
   }
   const { isLoading, data: artist, isError } = useArtistByIdQuery(artistId);
   if (isLoading) {
@@ -18,6 +33,7 @@ export default function ArtistPage() {
   if (isError || !artist) {
     return notFound();
   }
+
   return (
     <div className="flex flex-col w-full gap-8">
       <div className="flex flex-row items-center justify-start gap-4  w-full ">

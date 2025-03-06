@@ -5,6 +5,10 @@ import { desc, sql, eq, and } from "drizzle-orm";
 import type { Song, SongWithArtistName, SongListen } from "@/server/db/schema";
 import { getServerAuthSession } from "@/server/auth";
 import { unauthorized } from "next/navigation";
+import {
+  deleteImageFromStorage,
+  deleteSongFromStorage,
+} from "../storage/utils";
 
 async function AuthenticatedQuery(): Promise<boolean> {
   const session = await getServerAuthSession();
@@ -105,7 +109,7 @@ export async function getLikedSongs(
     const res = await db
       .select()
       .from(songs)
-      .innerJoin(likes, eq(songs.id, likes.songId)) // Add this line to join likes
+      .innerJoin(likes, eq(songs.id, likes.songId))
       .innerJoin(users, eq(songs.artistId, users.id))
       .where(eq(likes.userId, userId))
       .orderBy(desc(songs.createdAt))
@@ -265,8 +269,11 @@ export async function deleteSong({
       message: "You are not authorized to delete this song.",
     };
   }
+
   try {
     await db.delete(songs).where(eq(songs.fileUrl, song.fileUrl));
+    await deleteImageFromStorage(song);
+    await deleteSongFromStorage(song);
     return { status: "success", message: "Song deleted successfully." };
   } catch (error) {
     console.error("Error deleting song:", error);

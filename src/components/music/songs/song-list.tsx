@@ -18,8 +18,8 @@ export default function SongList({
 }
 function NoSongs() {
   return (
-    <div className="flex flex-col items-center justify-center max-w-3xl mx-auto">
-      <h1>No songs found</h1>
+    <div className="flex flex-col items-center justify-center max-w-3xl mx-auto py-6">
+      <h3 className="text-black/60">No songs found</h3>
     </div>
   );
 }

@@ -3,10 +3,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { handleFormSubmit } from "./handle-form-submit";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { loadFFmpeg } from "./ffmpeg/ffmpeg-core";
-import MusicPlayer from "../music-player";
 import { SongWithArtistName } from "@/server/db/schema";
 import { useInvalidateSongs, useInvalidateArtistSongs } from "@/hooks/useQuery";
-
+import { useMusicPlayer } from "@/hooks/music-player-provider";
 export function SongUploadForm({
   userId,
   userName,
@@ -30,6 +29,7 @@ export function SongUploadForm({
   const [FFmpegLoaded, setFFmpwgLoaded] = useState(false);
   const { invalidateSongs } = useInvalidateSongs();
   const { invalidateArtistSongs } = useInvalidateArtistSongs(userId);
+  const { addToQueue, resetQueue } = useMusicPlayer();
 
   useEffect(() => {
     load();
@@ -38,6 +38,25 @@ export function SongUploadForm({
   const load = useCallback(async () => {
     await loadFFmpeg(ffmpegRef.current, setFFmpwgLoaded);
   }, []);
+
+  useEffect(() => {
+    if (audioPreview) {
+      resetQueue();
+      addToQueue(audioPreview);
+    }
+  }, [audioPreview, title, coverArtPreview]);
+
+  useEffect(() => {
+    if (title && audioPreview) {
+      setAudioPreview({ ...audioPreview, title: title });
+    }
+  }, [title]);
+
+  useEffect(() => {
+    if (coverArtPreview && audioPreview) {
+      setAudioPreview({ ...audioPreview, image: coverArtPreview });
+    }
+  }, [coverArtPreview]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -54,7 +73,9 @@ export function SongUploadForm({
             title,
             artistName: userName,
             artistId: userId,
-            image: coverArtPreview,
+            image: coverArtPreview
+              ? coverArtPreview
+              : "/images/default-cover.svg",
             categoryId: "temp",
             description: "temp",
             createdAt: new Date(),
@@ -145,16 +166,6 @@ export function SongUploadForm({
             id="coverArt"
           />
         </label>
-        {coverArtPreview && (
-          <div className="mt-2 flex justify-center">
-            <img
-              src={coverArtPreview}
-              alt="Cover art preview"
-              className="w-full aspect-square object-cover rounded-xl my-4"
-            />
-          </div>
-        )}
-        {audioPreview && <MusicPlayer song={audioPreview} />}
       </div>
 
       <button

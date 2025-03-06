@@ -94,21 +94,21 @@ function SongLikes({ songId, artistId }: { songId: string; artistId: string }) {
     return <p>Error occured please refresh</p>;
   }
   return (
-    <div className="flex flex-row gap-2 items-center">
+    <div className="flex flex-row gap-1 items-center pt-1 h-[20px]">
       {songs.isLiked ? (
         <HeartIcon className="size-4" stroke="black" />
       ) : (
         <HeartEmptyIcon className="size-4" stroke="black" />
       )}
 
-      <p>{songs.likesCount}</p>
+      <p className="text-xs">{songs.likesCount}</p>
     </div>
   );
 }
 
 function Loading() {
   return (
-    <div>
+    <div className="h-[20px] pt-1">
       <SpinnerIcon className="size-4 animate-spin" />
     </div>
   );

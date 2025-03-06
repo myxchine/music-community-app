@@ -14,13 +14,19 @@ export default function MusicPlayer() {
   if (!currentSong) {
     return null;
   }
+
+  const songImage =
+    `https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${currentSong.image}` ||
+    "/images/default-cover.svg";
+
   return (
     <div className="relative text-white bg-black/80  backdrop-blur-sm  w-full overflow-hidden rounded-2xl">
       <div className=" mx-auto flex flex-row items-center p-3 pb-2 gap-2">
         <Image
           src={
-            `https://pub-5d98fcdd24fb4227be900a856fef1126.r2.dev/${currentSong.image}` ||
-            "/images/default-cover.svg"
+            currentSong.image?.startsWith("blob:")
+              ? currentSong.image
+              : currentSong.image || songImage
           }
           alt="song cover art"
           width={100}
