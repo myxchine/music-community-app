@@ -3,11 +3,11 @@ import { SongUploadForm } from "./form";
 import { Suspense } from "react";
 import { Loading } from "@/components/loading";
 
-export default function UploadAudioComponent({ userId }: { userId: string }) {
+export default function UploadAudioComponent({ userId, userName }: { userId: string, userName: string }) {
   return (
     <Suspense fallback={<Loading />}>
       <NoSSRWrapper>
-        <SongUploadForm userId={userId} />
+        <SongUploadForm userId={userId}  userName={userName}/>
       </NoSSRWrapper>
     </Suspense>
   );

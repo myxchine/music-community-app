@@ -17,7 +17,10 @@ export default function Home() {
   }
   return (
     <div className="flex flex-col items-center justify-center max-w-3xl mx-auto w-full">
-      <SongUploadComponent userId={session.user.id} />
+      <SongUploadComponent
+        userId={session.user.id}
+        userName={session.user.name || ""}
+      />
     </div>
   );
 }
