@@ -10,8 +10,6 @@ export const useSongsQuery = () => {
   return useQuery({
     queryKey: ["songs"],
     queryFn: getSongs,
-    staleTime: 60 * 60 * 1000,
-    retry: 2,
   });
 };
 
@@ -19,9 +17,6 @@ export const useArtistsQuery = () => {
   return useQuery({
     queryKey: ["artists"],
     queryFn: getArtists,
-
-    staleTime: 60 * 60 * 1000,
-    retry: 2,
   });
 };
 
@@ -29,8 +24,6 @@ export const useArtistSongsByIdQuery = (artistId: string) => {
   return useQuery({
     queryKey: ["artist", artistId, "songs"],
     queryFn: () => getSongsByArtist(artistId),
-    staleTime: 60 * 60 * 1000,
-    retry: 2,
     enabled: !!artistId,
   });
 };
@@ -39,12 +32,9 @@ export const useArtistByIdQuery = (artistId: string) => {
   return useQuery({
     queryKey: ["artist", artistId],
     queryFn: () => getArtist(artistId),
-    staleTime: 60 * 60 * 1000,
-    retry: 2,
     enabled: !!artistId,
   });
 };
-/*
 export const useInvalidateSongs = () => {
   const queryClient = useQueryClient();
 
@@ -74,4 +64,3 @@ export const useInvalidateArtistSongs = (artistId: string) => {
 
   return { invalidateArtistSongs };
 };
-*/

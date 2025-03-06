@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
+import { createContext, useContext, useState, useRef, useEffect } from "react";
 import type { SongWithArtistName } from "@/server/db/schema";
 import { toast } from "sonner";
 
@@ -65,7 +59,14 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (!audioRef.current || !currentSong) return;
-    const audioUrl = `https://pub-b40ea9d340a94cb1a3dfa14413f628b2.r2.dev/${currentSong.fileUrl}`;
+
+    let audioUrl;
+
+    if (currentSong.fileUrl.startsWith("data:")) {
+      audioUrl = currentSong.fileUrl;
+    } else {
+      audioUrl = `https://pub-b40ea9d340a94cb1a3dfa14413f628b2.r2.dev/${currentSong.fileUrl}`;
+    }
 
     audioRef.current.src = audioUrl;
     audioRef.current.load();
@@ -77,6 +78,12 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     }
   }, [currentSong]);
+
+  useEffect(() => {
+    if (queue.length > 0) {
+      playSong(queue[0]);
+    }
+  }, [queue]);
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
@@ -92,6 +99,7 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSongEnd = () => {
     console.log("Song ended");
+    console.log(queue);
     setIsPlaying(false);
     playNext();
   };
@@ -134,16 +142,11 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addToQueue = (song: SongWithArtistName) => {
     setQueue((prevQueue) => [...prevQueue, song]);
-    toast.success("Song added to queue");
   };
 
   const resetQueue = () => {
     setQueue([]);
   };
-
-  useEffect(() => {
-    console.log("queue", queue);
-  }, [queue]);
 
   const playNext = () => {
     console.log(queue);

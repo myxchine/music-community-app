@@ -17,16 +17,29 @@ export function Modal({
 }) {
   const handleDelete = async () => {
     const session = await getSession();
-    if (!session?.user?.id || song.id !== session.user.id) {
+    if (!session?.user?.id) {
+      console.error("Session not found");
+      toast.error("Failed to delete song");
+      return;
+    }
+    if (song.artistId !== session.user.id) {
+      console.error("Song not owned by user");
       toast.error("Failed to delete song");
       return;
     }
     const success = await deleteSong({ song });
     if (!success) {
+      console.error("Failed to delete song from database");
       toast.error("Failed to delete song");
       return;
     }
     toast.success("Song deleted successfully");
+    setModelOpen(false);
+  };
+
+  const handleAddToQueue = () => {
+    addToQueue(song);
+    toast.success("Song added to queue");
     setModelOpen(false);
   };
   return (
@@ -51,15 +64,15 @@ export function Modal({
             </div>
           </div>
 
-          <button
-            className="w-full button-black"
-            onClick={() => addToQueue(song)}
-          >
+          <button className="w-full button-black" onClick={handleAddToQueue}>
             Add to queue
           </button>
-          <button className="w-full button-black"
-          onClick={()=> toast.success("Liking songs feature coming soon")}
-          >Like song</button>
+          <button
+            className="w-full button-black"
+            onClick={() => toast.success("Liking songs feature coming soon")}
+          >
+            Like song
+          </button>
           {deleteable && (
             <button onClick={handleDelete} className="button-black w-full">
               Delete Song
@@ -76,4 +89,3 @@ export function Modal({
     </div>
   );
 }
-

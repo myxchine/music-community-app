@@ -37,7 +37,7 @@ export default function Account() {
           <h1>{session.user.name}</h1>
           <div className="flex flex-row items-center gap-2">
             <Link href="/account/upload-song" className="button-black text-xs">
-              {"upload new song"}
+              {"Upload new song"}
             </Link>
             <SignOut />
           </div>

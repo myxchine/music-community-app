@@ -31,7 +31,7 @@ export default function SongComponent({
 
   const handleClick = () => {
     resetQueue();
-    playSong(song);
+    addToQueue(song);
   };
   return (
     <div className="flex flex-row w-full items-cenet justify-center">
@@ -72,4 +72,3 @@ export default function SongComponent({
     </div>
   );
 }
-

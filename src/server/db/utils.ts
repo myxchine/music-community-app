@@ -246,13 +246,17 @@ export async function deleteSong({
   song: SongWithArtistName | Song;
 }): Promise<Status> {
   const session = await getServerAuthSession();
-  if (!session)
+  if (!session) {
+    console.error("No session found");
     return { status: "error", message: "Please sign in to delete your song." };
-  if (song.artistId !== session.user.id)
+  }
+  if (song.artistId !== session.user.id) {
+    console.log("Song not owned by user");
     return {
       status: "error",
       message: "You are not authorized to delete this song.",
     };
+  }
   try {
     await db.delete(songs).where(eq(songs.fileUrl, song.fileUrl));
     return { status: "success", message: "Song deleted successfully." };

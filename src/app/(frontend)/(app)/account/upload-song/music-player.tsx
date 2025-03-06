@@ -4,11 +4,23 @@ import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import Image from "next/image";
 import { SongWithArtistName } from "@/server/db/schema";
 export default function MusicPlayer({ song }: { song: SongWithArtistName }) {
-  const { isPlaying, duration, currentTime, togglePlayPause, seekTo } =
-    useMusicPlayer();
+  const {
+    isPlaying,
+    duration,
+    currentTime,
+    togglePlayPause,
+    seekTo,
+    playSong,
+    pauseSong,
+  } = useMusicPlayer();
   if (!song) {
     return null;
   }
+
+  const handleNewSongClick = () => {
+    playSong(song);
+  };
+
   return (
     <div className="relative text-white bg-black/80  backdrop-blur-sm  w-full overflow-hidden rounded-2xl">
       <div className=" mx-auto flex flex-row items-center p-3 pb-2 gap-2">
@@ -23,7 +35,7 @@ export default function MusicPlayer({ song }: { song: SongWithArtistName }) {
           <div className="text-lg">{song.title}</div>
           <div className="text-sm text-white/60">{song.artistName}</div>
         </div>
-        <button onClick={togglePlayPause} className="">
+        <button onClick={handleNewSongClick} className="" type="button">
           {isPlaying ? (
             <PauseIcon className="size-10" fill="white" />
           ) : (
