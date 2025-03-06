@@ -8,7 +8,10 @@ import { unauthorized } from "next/navigation";
 
 async function AuthenticatedQuery(): Promise<boolean> {
   const session = await getServerAuthSession();
-  if (!session) return unauthorized();
+  if (!session) {
+    console.error("No session found");
+    return false;
+  }
   return true;
 }
 export async function getArtists() {
@@ -102,8 +105,9 @@ export async function getLikedSongs(
     const res = await db
       .select()
       .from(songs)
-      .where(eq(likes.userId, userId))
+      .innerJoin(likes, eq(songs.id, likes.songId)) // Add this line to join likes
       .innerJoin(users, eq(songs.artistId, users.id))
+      .where(eq(likes.userId, userId))
       .orderBy(desc(songs.createdAt))
       .limit(60);
     if (!res) throw new Error("No songs found");
@@ -124,7 +128,7 @@ export async function getLikeStatus({
   userId,
   songId,
 }: {
-  userId?: string;
+  userId: string;
   songId: string;
 }): Promise<LikeStatus> {
   try {
@@ -148,15 +152,19 @@ export async function getLikeStatus({
   }
 }
 
-export async function likeSong(userId: string, songId: string) {
-  if (typeof userId !== "string" || typeof songId !== "string") {
-    console.error("Invalid userId or songId");
+export async function likeSong({
+  userId,
+  songId,
+}: {
+  userId: string;
+  songId: string;
+}) {
+  const session = await getServerAuthSession();
+  if (!session)
     return {
-      success: false,
-      delta: 0,
-      message: "Invalid userId or songId.",
+      status: { status: "error", message: "Please sign in to like a song." },
     };
-  }
+
   try {
     const existingLike = await db
       .select()

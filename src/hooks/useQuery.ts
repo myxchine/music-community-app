@@ -1,15 +1,25 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   getSongs,
   getArtists,
   getSongsByArtist,
   getArtist,
+  getLikeStatus,
+  likeSong,
+  getLikedSongs,
 } from "@/server/db/utils";
-
+import { toast } from "sonner";
 export const useSongsQuery = () => {
   return useQuery({
     queryKey: ["songs"],
     queryFn: getSongs,
+  });
+};
+
+export const useLikedSongsQuery = (userId: string) => {
+  return useQuery({
+    queryKey: ["likedSongs", userId],
+    queryFn: () => getLikedSongs(userId),
   });
 };
 
@@ -35,6 +45,63 @@ export const useArtistByIdQuery = (artistId: string) => {
     enabled: !!artistId,
   });
 };
+
+export const useSongLikeStatusQuery = ({
+  songId,
+  userId,
+}: {
+  songId: string;
+  userId: string;
+}) => {
+  return useQuery({
+    queryKey: ["song", songId, "likes"],
+    queryFn: () => getLikeStatus({ songId, userId }),
+    enabled: !!songId,
+  });
+};
+
+export const useSongLikeMutation = ({
+  userId,
+  songId,
+}: {
+  userId: string;
+  songId: string;
+}) => {
+  const { invalidateSong } = useInvalidateSong(songId);
+  return useMutation({
+    mutationFn: () => likeSong({ userId, songId }),
+    mutationKey: ["likeSong", songId, userId],
+    onSuccess: (data) => {
+      invalidateSong();
+      if (data && data.success && data.delta === 1) {
+        toast.success("Song liked successfully");
+        return;
+      }
+      if (data && data.success && data.delta === -1) {
+        toast.success("Song unliked successfully");
+        return;
+      }
+      if (data && !data.success) {
+        toast.success("Failed to like song please try again");
+        return;
+      }
+    },
+    onError: () => {
+      toast.error("Failed to like song please try again");
+    },
+  });
+};
+
+export const useInvalidateSong = (songId: string) => {
+  const queryClient = useQueryClient();
+
+  const invalidateSong = () => {
+    queryClient.invalidateQueries({ queryKey: ["song", songId] });
+  };
+
+  return { invalidateSong };
+};
+
 export const useInvalidateSongs = () => {
   const queryClient = useQueryClient();
 

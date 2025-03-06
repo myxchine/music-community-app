@@ -20,7 +20,6 @@ const queryClient = new QueryClient({
 });
 
 export default function WebApp({ children }: { children: React.ReactNode }) {
-  console.log(queryClient);
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>

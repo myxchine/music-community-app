@@ -3,10 +3,15 @@
 import { SongWithArtistName } from "@/server/db/schema";
 import { useMusicPlayer } from "@/hooks/music-player-provider";
 import { useEffect, useState } from "react";
-import { MoreIcon } from "@/components/ui/icons";
+import {
+  HeartEmptyIcon,
+  MoreIcon,
+  SpinnerIcon,
+  HeartIcon,
+} from "@/components/ui/icons";
 import Image from "next/image";
 import { Modal } from "./song-modal";
-
+import { useSongLikeStatusQuery } from "@/hooks/useQuery";
 export default function SongComponent({
   song,
   deleteable,
@@ -32,6 +37,7 @@ export default function SongComponent({
   const handleClick = () => {
     resetQueue();
     addToQueue(song);
+    setModelOpen(false);
   };
   return (
     <div className="flex flex-row w-full items-cenet justify-center">
@@ -53,6 +59,7 @@ export default function SongComponent({
         <div className="flex flex-col gap-0 w-full">
           <p>{song.title}</p>
           <p className="text-xs text-black/60">{song.artistName}</p>
+          <SongLikes songId={song.id} artistId={song.artistId} />
         </div>
       </div>
       <button
@@ -69,6 +76,40 @@ export default function SongComponent({
           addToQueue={addToQueue}
         />
       )}
+    </div>
+  );
+}
+
+function SongLikes({ songId, artistId }: { songId: string; artistId: string }) {
+  const {
+    isLoading,
+    data: songs,
+    error,
+    isError,
+  } = useSongLikeStatusQuery({ songId, userId: artistId });
+  if (isLoading || !songs) {
+    return <Loading />;
+  }
+  if (isError || !songs) {
+    return <p>Error occured please refresh</p>;
+  }
+  return (
+    <div className="flex flex-row gap-2 items-center">
+      {songs.isLiked ? (
+        <HeartIcon className="size-4" stroke="black" />
+      ) : (
+        <HeartEmptyIcon className="size-4" stroke="black" />
+      )}
+
+      <p>{songs.likesCount}</p>
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div>
+      <SpinnerIcon className="size-4 animate-spin" />
     </div>
   );
 }

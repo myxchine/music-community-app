@@ -1,9 +1,11 @@
+"use client";
+
 import { SongWithArtistName } from "@/server/db/schema";
 import Image from "next/image";
 import { deleteSong } from "@/server/db/utils";
 import { toast } from "sonner";
-import { getSession } from "next-auth/react";
-
+import { getSession, useSession } from "next-auth/react";
+import { useSongLikeMutation } from "@/hooks/useQuery";
 export function Modal({
   song,
   deleteable,
@@ -42,6 +44,20 @@ export function Modal({
     toast.success("Song added to queue");
     setModelOpen(false);
   };
+  const session = useSession();
+
+  if (!session?.data) {
+    return;
+  }
+  const { mutate } = useSongLikeMutation({
+    songId: song.id,
+    userId: session.data.user.id,
+  });
+  const handleLikeSong = () => {
+    mutate();
+    setModelOpen(false);
+  };
+
   return (
     <div className="flex flex-col justify-end gap-4 fixed bottom-0 left-0 w-full z-[999999999] h-[100svh] bg-black/20 backdrop-blur-md px-2">
       <div className="max-w-[var(--max-width)] mx-auto flex flex-col items-center justify-center w-full">
@@ -67,11 +83,8 @@ export function Modal({
           <button className="w-full button-black" onClick={handleAddToQueue}>
             Add to queue
           </button>
-          <button
-            className="w-full button-black"
-            onClick={() => toast.success("Liking songs feature coming soon")}
-          >
-            Like song
+          <button className="w-full button-black" onClick={handleLikeSong}>
+            Toggle like song
           </button>
           {deleteable && (
             <button onClick={handleDelete} className="button-black w-full">
