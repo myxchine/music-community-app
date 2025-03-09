@@ -48,7 +48,7 @@ export default function SongComponent({
 
   const handleClick = () => {
     resetQueue();
-    addToQueue(song);
+    playSong(song);
     setModelOpen(false);
   };
   return (

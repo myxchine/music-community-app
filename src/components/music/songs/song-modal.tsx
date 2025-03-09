@@ -58,7 +58,7 @@ export function Modal({
 
   const handleAddToQueue = () => {
     addToQueue(song);
-    toast.success("Song added to queue");
+    toast.success(`Added ${song.title} to queue`);
     setModelOpen(false);
   };
   const session = useSession();
