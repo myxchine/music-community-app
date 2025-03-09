@@ -2,7 +2,7 @@
 import { useMusicPlayer } from "@/hooks/music-player-provider";
 import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import Image from "next/image";
-import { SpinnerIcon } from "@/components/ui/icons";
+import { SpinnerIcon, NextIcon, PreviousIcon } from "@/components/ui/icons";
 export default function MusicPlayer() {
   const {
     currentSong,
@@ -12,6 +12,8 @@ export default function MusicPlayer() {
     currentTime,
     togglePlayPause,
     seekTo,
+    playNext,
+    playPrevious,
   } = useMusicPlayer();
   if (!currentSong) {
     return null;
@@ -42,6 +44,9 @@ export default function MusicPlayer() {
           <div className="text-lg">{currentSong.title}</div>
           <div className="text-sm text-white/60">{currentSong.artistName}</div>
         </div>
+        <button onClick={playPrevious} className="">
+          <PreviousIcon className="size-10 pl-1" fill="white" />
+        </button>
         <button onClick={togglePlayPause} className="">
           {songLoading ? (
             <SpinnerIcon className="size-10 animate-spin" />
@@ -50,6 +55,9 @@ export default function MusicPlayer() {
           ) : (
             <PlayIcon className="size-10 pl-1" fill="white" />
           )}
+        </button>
+        <button onClick={playNext} className="">
+          <NextIcon className="size-10 pl-1" fill="white" />
         </button>
       </div>
       <ProgressBar

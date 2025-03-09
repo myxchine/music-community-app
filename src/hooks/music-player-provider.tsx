@@ -28,6 +28,8 @@ interface MusicPlayerContextType {
   playPrevious: () => void;
   resetQueue: () => void;
   setQueue: (queue: SongWithArtistName[]) => void;
+  history: SongWithArtistName[];
+  clearHistory: () => void;
 }
 
 const MusicPlayerContext = createContext<MusicPlayerContextType | undefined>(
@@ -45,16 +47,24 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [queue, setQueue] = useState<SongWithArtistName[]>([]);
+  const [history, setHistory] = useState<SongWithArtistName[]>([]);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const queueRef = useRef<SongWithArtistName[]>([]);
+  const historyRef = useRef<SongWithArtistName[]>([]);
 
-  // Keep queueRef in sync with queue state
+  // Keep refs in sync with state
   useEffect(() => {
     queueRef.current = queue;
+  }, [queue]);
 
+  useEffect(() => {
+    historyRef.current = history;
+  }, [history]);
+
+  useEffect(() => {
     if (queue.length > 0 && !currentSong) {
       console.log("Playing first song in queue");
-      
       playSong(queue[0]);
     }
   }, [queue, currentSong]);
@@ -108,9 +118,6 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       playNext,
       playPrevious,
     });
-
-    // Don't auto-play here, let the canplay event handler handle this
-    // based on the isPlaying state
   }, [currentSong]);
 
   useEffect(() => {
@@ -185,6 +192,11 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       const nextSong = queueRef.current[0];
       console.log("Playing next song:", nextSong);
 
+      // Add current song to history before moving to next
+      if (currentSong) {
+        addToHistory(currentSong);
+      }
+
       // Set loading state to true when starting to load the next song
       setSongLoading(true);
 
@@ -214,14 +226,28 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
           playNext,
           playPrevious,
         });
-
-        // We don't call play() here - it will be triggered by the canplay event
-        // This helps avoid the "play interrupted by load" error
       }
     }
   };
 
+  const addToHistory = (song: SongWithArtistName) => {
+    // Add to history (limited to last 20 songs)
+    setHistory((prevHistory) => {
+      const newHistory = [...prevHistory, song];
+      // Limit history size to prevent excessive memory usage
+      if (newHistory.length > 20) {
+        return newHistory.slice(newHistory.length - 20);
+      }
+      return newHistory;
+    });
+  };
+
   const playSong = (song: SongWithArtistName) => {
+    // Add current song to history before changing songs
+    if (currentSong) {
+      addToHistory(currentSong);
+    }
+
     // Set loading state when we start playing a new song
     setSongLoading(true);
     setCurrentSong(song);
@@ -258,6 +284,7 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       setSongLoading(true);
       audioRef.current.currentTime = time;
       setCurrentTime(time);
+      setSongLoading(false);
       // The loading state will be managed by the canplay/waiting events
     }
   };
@@ -273,18 +300,31 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     setQueue([]);
   };
 
+  const clearHistory = () => {
+    setHistory([]);
+  };
+
   const playNext = () => {
     console.log("Manual playNext called");
     console.log("Current queue:", queueRef.current);
 
     if (queueRef.current.length > 0) {
+      // Add current song to history before moving to next
+      if (currentSong) {
+        addToHistory(currentSong);
+      }
+
       const nextSong = queueRef.current[0];
       console.log("Playing next song:", nextSong);
 
       // Set loading state when playing next
       setSongLoading(true);
       setQueue((prevQueue) => prevQueue.slice(1));
-      playSong(nextSong);
+
+      // We call setCurrentSong and setIsPlaying directly instead of playSong
+      // to avoid double-adding the current song to history
+      setCurrentSong(nextSong);
+      setIsPlaying(true);
     } else {
       toast.info("No more songs in queue");
     }
@@ -298,10 +338,32 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
         setSongLoading(true);
         audioRef.current.currentTime = 0;
       } else {
-        // TODO: Implement previous song functionality if we want to
-        // For now, just restart the current song
-        setSongLoading(true);
-        audioRef.current.currentTime = 0;
+        // If we're less than 3 seconds into the song, go to previous song in history
+        if (historyRef.current.length > 0) {
+          // Get the most recent song from history
+          const prevHistory = [...historyRef.current];
+          const previousSong = prevHistory.pop();
+
+          if (previousSong) {
+            // Update history state without the song we're about to play
+            setHistory(prevHistory);
+
+            // Insert current song at the beginning of the queue
+            if (currentSong) {
+              setQueue((prevQueue) => [currentSong, ...prevQueue]);
+            }
+
+            // Play the previous song without adding current song to history again
+            setSongLoading(true);
+            setCurrentSong(previousSong);
+            setIsPlaying(true);
+          }
+        } else {
+          // No history available, just restart the current song
+          setSongLoading(true);
+          audioRef.current.currentTime = 0;
+          toast.info("No previous songs in history");
+        }
       }
     }
   };
@@ -323,6 +385,8 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     playPrevious,
     resetQueue,
     setQueue,
+    history,
+    clearHistory,
   };
 
   return (
